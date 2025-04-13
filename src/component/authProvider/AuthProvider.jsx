@@ -34,6 +34,7 @@ const AuthProvider = ({ children }) => {
         const unSubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUsers(user)
+                console.log(user.displayName, user.email, user.photoURL    )
             } else {
                 setUsers(null)
             }

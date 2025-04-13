@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import Swal from 'sweetalert2';
+import { FaRegUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
   const { signout, setLoading, users } = useContext(AuthContext);
@@ -32,6 +33,14 @@ const Navbar = () => {
       }
     });
   }
+  function isValidUrl(url) {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  }
   // Close menu if click outside
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -61,7 +70,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-sm py-7 bg-slate-700 relative" ref={menuRef}>
+    <div className="navbar bg-base-100 shadow-sm py-7 px-5 bg-slate-700 relative" ref={menuRef}>
       <div className="navbar-start">
         {/* Mobile menu button */}
         <div className="lg:hidden">
@@ -74,7 +83,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        <NavLink to="/" className="btn btn-ghost text-xl">
+        <NavLink to="/" className=" text-xl">
           Food Line
         </NavLink>
       </div>
@@ -85,10 +94,9 @@ const Navbar = () => {
           <ul className="menu p-4 bg-slate-700 rounded-lg space-y-2">
             <li><NavLink to="/" onClick={handleLinkClick}>Home</NavLink></li>
             <li><NavLink to="/availablefood" onClick={handleLinkClick}>Available Foods</NavLink></li>
+            <li><NavLink to="/addfood" onClick={handleLinkClick}>Add Food</NavLink></li>
             <li><NavLink to="/managemyfood" onClick={handleLinkClick}>Manage My Foods</NavLink></li>
             <li><NavLink to="/myfoodrequest" onClick={handleLinkClick}>My Food Request</NavLink></li>
-            <li><NavLink to="/login" onClick={handleLinkClick}>Login</NavLink></li>
-            <li><NavLink to="/signup" onClick={handleLinkClick}>Signup</NavLink></li>
           </ul>
         </div>
       )}
@@ -98,16 +106,27 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">
           <li><NavLink to="/">Home</NavLink></li>
           <li><NavLink to="/availablefood">Available Foods</NavLink></li>
+          <li><NavLink to="/addfood">Add Food</NavLink></li>
           <li><NavLink to="/managemyfood">Manage My Foods</NavLink></li>
           <li><NavLink to="/myfoodrequest">My Food Request</NavLink></li>
-          <li><NavLink to="/login">Login</NavLink></li>
-          <li><NavLink to="/signup">Signup</NavLink></li>
         </ul>
       </div>
 
       <div className="navbar-end  lg:flex">
         {
-          users ? <button onClick={handleLogOut} className="btn">Log Out</button> : <Link to={"/signup"}><button className='btn'>Sign In</button></Link>
+          users ? <div className="flex items-center gap-2">
+            {isValidUrl(users?.photoURL) ? (
+              <img src={users.photoURL} alt="User" className="w-8 h-8 rounded-full" />
+            ) : (
+              <FaRegUserCircle className="w-8 h-8" />
+            )}
+            <button onClick={handleLogOut} className="btn">Log Out</button>
+          </div>
+            :
+            <div className='flex gap-2 items-center'>
+              <Link to={"/signup"}><button className='btn'>SignUp</button></Link>
+              <Link to={"/login"}><button className='btn'>logIn</button></Link>
+            </div>
         }
       </div>
     </div>
