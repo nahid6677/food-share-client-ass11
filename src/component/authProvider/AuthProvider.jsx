@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 import { auth } from '../firebase/firebase.init';
 import { createUserWithEmailAndPassword, GithubAuthProvider, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import axios from 'axios';
 
 const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
-    const [users, setUsers] = useState(null)
+    const [users, setUsers] = useState([])
+    const [foods, setFood] = useState([]);
+    // console.log(foods)
 
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
@@ -34,9 +37,26 @@ const AuthProvider = ({ children }) => {
         const unSubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUsers(user)
-                console.log(user.displayName, user.email, user.photoURL    )
+                const userEmail = {email: user.email}; 
+                // console.log(user.displayName, user.email, user.photoURL    )
+                axios.post(`http://localhost:5000/jwt`, userEmail, {
+                    withCredentials: true
+                })
+                .then(res =>{
+                    console.log(res.data)
+                })
+                .catch(er =>{
+                    console.log(er)
+                })
             } else {
                 setUsers(null)
+                axios.post(`http://localhost:5000/logout`, {}, {
+                    withCredentials: true
+                })
+                .then(res =>{
+                    // console.log(res.data)
+                })
+
             }
             console.log(user ? "user captured" : "user not captured")
         });
@@ -55,6 +75,10 @@ const AuthProvider = ({ children }) => {
         loading,
         signout,
         users,
+        setUsers,
+        foods,
+        setFood,
+
 
     }
     return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>

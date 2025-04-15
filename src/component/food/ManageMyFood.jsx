@@ -3,10 +3,14 @@ import AuthContext from '../context/AuthContext';
 import axios from 'axios';
 import { VscEmptyWindow } from 'react-icons/vsc';
 import { FaArrowsSpin } from 'react-icons/fa6';
+import { Link } from 'react-router-dom';
 
 const ManageMyFood = () => {
-    const { users } = useContext(AuthContext);
-    const [myFood, setMyFood] = useState([])
+    const { users,setFood, foods  } = useContext(AuthContext);
+    // console.log(foods.filter( food => food?.donerEmail === users.email), users.email)
+        const [myFood, setMyFood] = useState(foods.filter(food => food?.donerEmail === users.email))
+        // console.log(myFood)
+        // setMyFood()
     const findDate = (date) =>{
         const bdTime = new Date(date).toLocaleDateString('en-CA', {
             timeZone: 'Asia/Dhaka'
@@ -22,7 +26,9 @@ const ManageMyFood = () => {
         }
     }
     useEffect(() => {
-        axios.get(`http://localhost:5000/foods?email=${users?.email}`)
+        axios.get(`http://localhost:5000/managemyfood?email=${users?.email}`,{
+            withCredentials: true
+        })
             .then(res => {
                 setMyFood(res.data);
                 console.log(res.data);
@@ -45,7 +51,7 @@ const ManageMyFood = () => {
                     <tbody>
                         {/* row 1 */}
                         {
-                            myFood.map((food, idx) => <tr>
+                            myFood.map((food, idx) => <tr key={idx}>
                                 <th>{idx + 1} </th>
                                 <td>
                                     <div className="flex items-center gap-2">
@@ -69,7 +75,7 @@ const ManageMyFood = () => {
                                 </td>
                                 <td>{food?.quantity}</td>
                                 <th>
-                                    <button className="btn btn-ghost btn-xs">details</button>
+                                    <Link to={`/fooddetails/${food._id}`}><button className="btn btn-ghost btn-xs">details</button></Link>
                                 </th>
                             </tr>)
                         }

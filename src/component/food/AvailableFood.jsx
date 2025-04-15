@@ -1,16 +1,20 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 
 const AvailableFood = () => {
-    const [foods, setFood] = useState([12, 12, 12, 45, 48, 77]);
+    const {foods,setFood, users} = useContext(AuthContext)
+    // const [foods, setFood] = useState([]);
     useEffect(() => {
-        axios.get(`http://localhost:5000/foods`)
+        axios.get(`http://localhost:5000/foods?email=${users.email}`,{
+            withCredentials: true
+        })
             .then(response => {
                 setFood(response.data)
                 console.log(response.data)
             })
-    }, [])
+    }, [users])
     return (
         <div className=' '>
             <div className="flex justify-between py-3 rounded-md px-2 bg-gray-600">
